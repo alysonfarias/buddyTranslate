@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f5f5f5;
+    color: #000000; /* Use black for text */
+}
+
+h1 {
+    text-align: center;
+    color: #10C26F; /* Accent color */
+}
+
+h2 {
+    color: #10C26F; /* Accent color */
+}
+
+label {
+    font-weight: bold;
+    color: #000000; /* Black for labels */
+}
+
+select {
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #10C26F; /* Accent color */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+    transition: background-color 0.3s; /* Smooth hover effect */
+}
+
+button:hover {
+    background-color: #0fa95d; /* Darker shade for hover effect */
+}
+
+#favoritesSection {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#favoritesList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#favoritesList li {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    color: #000000; /* Black for list items */
+}
+
+#favoritesList li:last-child {
+    border-bottom: none; /* Remove bottom border for the last item */
+}
+
+#favoritesList li:hover {
+    background-color: #f0f0f0; /* Highlight on hover */
+}
