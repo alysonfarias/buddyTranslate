@@ -26,12 +26,32 @@ document.addEventListener('dblclick', function(e) {
 
 function showPopup(originalText, translatedText, posX, posY) {
   const popup = document.createElement('div');
-  popup.innerHTML = `<div style="padding: 10px; background-color: white; border: 1px solid black; border-radius: 5px; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); position: fixed; top: ${posY - 40}px; left: ${posX + 20}px; z-index: 10001;">Original: ${originalText}<br>Translated: ${translatedText}</div>`;
+  popup.innerHTML = `
+  <div style="padding: 10px; background-color: white; border: 1px solid black; border-radius: 5px; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); position: fixed; top: ${posY - 40}px; left: ${posX + 20}px; z-index: 10001;">
+      Original: ${originalText}<br>
+      Translated: ${translatedText}<br>
+      <button id="saveFavorite">Save Favorite</button>
+  </div>`;
   document.body.appendChild(popup);
 
-  setTimeout(() => { // Automatically remove the popup after some time
+  const saveButton = popup.querySelector('#saveFavorite');
+  saveButton.addEventListener('click', function() {
+      saveFavorite(originalText, translatedText);
+  });
+
+  setTimeout(() => {
       if (document.body.contains(popup)) {
           document.body.removeChild(popup);
       }
   }, 5000);
+}
+
+function saveFavorite(originalText, translatedText) {
+  chrome.storage.local.get({favorites: []}, function(data) {
+      const newFavorite = {original: originalText, translated: translatedText};
+      const favorites = [...data.favorites, newFavorite];
+      chrome.storage.local.set({favorites: favorites}, function() {
+          console.log('Favorite saved:', newFavorite);
+      });
+  });
 }
