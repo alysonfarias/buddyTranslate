@@ -11,12 +11,12 @@ document.addEventListener('dblclick', function(e) {
       document.body.appendChild(icon);
 
       icon.addEventListener('click', () => {
-          const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(selectedText)}`;
+          const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q=${encodeURIComponent(selectedText)}`;
           fetch(apiUrl)
               .then(response => response.json())
               .then(data => {
                   const translatedText = data[0][0][0];
-                  showPopup(translatedText, e.pageX, e.pageY);
+                  showPopup(selectedText, translatedText, e.pageX, e.pageY);
               })
               .catch(error => console.error('Error translating text:', error));
           document.body.removeChild(icon); // Remove the icon after clicking
@@ -24,9 +24,9 @@ document.addEventListener('dblclick', function(e) {
   }
 });
 
-function showPopup(translatedText, posX, posY) {
+function showPopup(originalText, translatedText, posX, posY) {
   const popup = document.createElement('div');
-  popup.innerHTML = `<div style="padding: 10px; background-color: white; border: 1px solid black; border-radius: 5px; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); position: fixed; top: ${posY}px; left: ${posX}px; z-index: 10001;">${translatedText}</div>`;
+  popup.innerHTML = `<div style="padding: 10px; background-color: white; border: 1px solid black; border-radius: 5px; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); position: fixed; top: ${posY - 40}px; left: ${posX + 20}px; z-index: 10001;">Original: ${originalText}<br>Translated: ${translatedText}</div>`;
   document.body.appendChild(popup);
 
   setTimeout(() => { // Automatically remove the popup after some time
