@@ -1,120 +1,127 @@
-document.addEventListener("dblclick", function (e) {
-  const selectedText = window.getSelection().toString().trim();
-  console.log("🚀 ~ selectedText:", selectedText)
-  if (selectedText.length > 0) {
-    const icon = document.createElement("img");
-    icon.src = chrome.runtime.getURL("images/translate-icon.png");
-    icon.style.position = "fixed";
-    icon.style.top = `${e.pageY - 20}px`; // Adjust icon position
-    icon.style.left = `${e.pageX + 20}px`; // Adjust icon position
-    icon.style.cursor = "pointer";
-    icon.style.zIndex = "10000";
-    document.body.appendChild(icon);
+let icon; // Declare the icon variable in a higher scope
+let popup; // Declare the popup variable in a higher scope
 
-    icon.addEventListener("click", () => {
-      const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q=${encodeURIComponent(
-        selectedText
-      )}`;
-      fetch(apiUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          const translatedText = data[0][0][0];
-          showPopup(selectedText, translatedText, e.pageX, e.pageY);
-        })
-        .catch((error) => console.error("Error translating text:", error));
-      document.body.removeChild(icon); // Remove the icon after clicking
-    });
-  }
+document.addEventListener("mouseup", function(e) {
+    setTimeout(() => {
+        handleTextSelection(e);
+    }, 200);
 });
-document.addEventListener('mouseup', function(e) {
+
+// Function to handle text selection and show the translation icon
+function handleTextSelection(e) {
     const selectedText = window.getSelection().toString().trim();
-    console.log("selectedText", selectedText)
+    console.log("Selected Text:", selectedText);
+
+    if (icon) {
+        document.body.removeChild(icon);
+        icon = null;
+    }
+
     if (selectedText.length > 0) {
-        const icon = document.createElement("img");
+        icon = document.createElement("img");
         icon.src = chrome.runtime.getURL("images/translate-icon.png");
         icon.style.position = "fixed";
-        icon.style.top = `${e.pageY - 20}px`; // Adjust icon position
-        icon.style.left = `${e.pageX + 20}px`; // Adjust icon position
+        icon.style.top = `${e.pageY - 20}px`;
+        icon.style.left = `${e.pageX + 20}px`;
         icon.style.cursor = "pointer";
         icon.style.zIndex = "10000";
         document.body.appendChild(icon);
 
-        icon.addEventListener("click", () => {
-        const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q=${encodeURIComponent(
-            selectedText
-        )}`;
-        fetch(apiUrl)
-            .then((response) => response.json())
-            .then((data) => {
-            const translatedText = data[0][0][0];
-            showPopup(selectedText, translatedText, e.pageX, e.pageY);
-            })
-            .catch((error) => console.error("Error translating text:", error));
-        document.body.removeChild(icon); // Remove the icon after clicking
-        });
+        icon.addEventListener("click", function iconClickHandler() {
+            const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q=${encodeURIComponent(
+                selectedText
+            )}`;
+            fetch(apiUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    const translatedText = data[0][0][0];
+                    console.log("Translation:", translatedText);
+                    showPopup(selectedText, translatedText);
+                })
+                .catch((error) => console.error("Error translating text:", error));
 
+            // Remove the icon after clicking
+            document.body.removeChild(icon);
+            icon = null;
+        });
+    }
+}
+
+// Add an event listener for selection change to remove the icon if no text is selected
+document.addEventListener('selectionchange', function() {
+    const selectedText = window.getSelection().toString().trim();
+    if (icon && selectedText.length === 0) {
+        document.body.removeChild(icon);
+        icon = null;
     }
 });
 
-
-
-function showPopup(originalText, translatedText, posX, posY) {
-  const popup = document.createElement("div");
-  popup.innerHTML = `
-  <div style="
-      padding: 15px; 
-      background-color: white; 
-      border: 1px solid #10C26F; 
-      border-radius: 8px; 
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
-      position: fixed; 
-      top: ${posY - 60}px; 
-      left: ${posX + 20}px; 
-      z-index: 10001; 
-      max-width: 300px; 
-      font-family: Arial, sans-serif;
-      color: #000000;">
-      <strong style="color: #10C26F;">Original:</strong> ${originalText}<br>
-      <strong style="color: #10C26F;">Translated:</strong> ${translatedText}<br>
-      <button id="saveFavorite" style="
-          background-color: #10C26F; 
-          color: white; 
-          padding: 8px 12px; 
-          border: none; 
-          border-radius: 5px; 
-          cursor: pointer; 
-          margin-top: 10px;">
-          Save Favorite
-      </button>
-  </div>`;
-
-  document.body.appendChild(popup);
-
-  const saveButton = popup.querySelector("#saveFavorite");
-  saveButton.addEventListener("click", function () {
-    saveFavorite(originalText, translatedText);
-  });
-
-  // Automatically remove the popup after 5 seconds
-  setTimeout(() => {
-    if (document.body.contains(popup)) {
-      document.body.removeChild(popup);
+function showPopup(originalText, translatedText) {
+    if (popup) {
+        document.body.removeChild(popup);
     }
-  }, 5000);
+
+    // Calculate the position based on the selection's bounding rectangle
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    const posX = rect.left + (rect.width / 2); // Middle of the selected text
+    const posY = rect.bottom; // Bottom of the selected text
+
+    console.log("Showing popup at:", posX, posY);
+
+    popup = document.createElement("div");
+    popup.innerHTML = `
+    <div style="
+        padding: 15px; 
+        background-color: white; 
+        border: 1px solid #10C26F; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+        position: fixed; 
+        top: ${posY + 10}px; 
+        left: ${posX - 150}px; 
+        z-index: 10001; 
+        max-width: 300px; 
+        font-family: Arial, sans-serif;
+        color: #000000;">
+        <strong style="color: #10C26F;">Original:</strong> ${originalText}<br>
+        <strong style="color: #10C26F;">Translated:</strong> ${translatedText}<br>
+        <button id="saveFavorite" style="
+            background-color: #10C26F; 
+            color: white; 
+            padding: 8px 12px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin-top: 10px;">
+            Save Favorite
+        </button>
+    </div>`;
+
+    document.body.appendChild(popup);
+
+    const saveButton = popup.querySelector("#saveFavorite");
+    saveButton.addEventListener("click", function () {
+        saveFavorite(originalText, translatedText);
+    });
+
+    // Add an event listener to dismiss the popup when clicking outside of it
+    document.addEventListener('click', function dismissPopup(e) {
+        if (popup && !popup.contains(e.target)) {
+            document.body.removeChild(popup);
+            popup = null;
+            document.removeEventListener('click', dismissPopup);
+        }
+    }, { once: true });
 }
 
-setTimeout(() => {
-  if (document.body.contains(popup)) {
-    document.body.removeChild(popup);
-  }
-}, 5000);
-
 function saveFavorite(originalText, translatedText) {
-  chrome.storage.local.get({ favorites: [] }, function (data) {
-    const newFavorite = { original: originalText, translated: translatedText };
-    const favorites = [...data.favorites, newFavorite];
-    chrome.storage.local.set({ favorites: favorites }, function () {
-      console.log("Favorite saved:", newFavorite);
+    chrome.storage.local.get({ favorites: [] }, function (data) {
+        const newFavorite = { original: originalText, translated: translatedText };
+        const favorites = [...data.favorites, newFavorite];
+        chrome.storage.local.set({ favorites: favorites }, function () {
+            console.log("Favorite saved:", newFavorite);
+        });
     });
-  });
 }
