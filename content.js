@@ -1,5 +1,6 @@
 document.addEventListener("dblclick", function (e) {
   const selectedText = window.getSelection().toString().trim();
+  console.log("🚀 ~ selectedText:", selectedText)
   if (selectedText.length > 0) {
     const icon = document.createElement("img");
     icon.src = chrome.runtime.getURL("images/translate-icon.png");
@@ -25,44 +26,36 @@ document.addEventListener("dblclick", function (e) {
     });
   }
 });
-
 document.addEventListener('mouseup', function(e) {
     const selectedText = window.getSelection().toString().trim();
+    console.log("selectedText", selectedText)
     if (selectedText.length > 0) {
-        // Remove any existing icon to prevent duplicates
-        const existingIcon = document.getElementById('translate-icon');
-        if (existingIcon) {
-            document.body.removeChild(existingIcon);
-        }
-
-        const icon = document.createElement('img');
-        icon.id = 'translate-icon'; // Set an ID for easy removal later
-        icon.src = chrome.runtime.getURL("images/translate-icon.png"); // Properly link the image
-        icon.style.position = 'fixed';
-        icon.style.top = `${e.pageY - 20}px`; // Adjust the icon's vertical position
-        icon.style.left = `${e.pageX + 20}px`; // Adjust the icon's horizontal position
-        icon.style.cursor = 'pointer';
-        icon.style.zIndex = '10000';
-        icon.style.width = '50px'; // Set width for visibility
-        icon.style.height = '50px'; // Set height for visibility
+        const icon = document.createElement("img");
+        icon.src = chrome.runtime.getURL("images/translate-icon.png");
+        icon.style.position = "fixed";
+        icon.style.top = `${e.pageY - 20}px`; // Adjust icon position
+        icon.style.left = `${e.pageX + 20}px`; // Adjust icon position
+        icon.style.cursor = "pointer";
+        icon.style.zIndex = "10000";
         document.body.appendChild(icon);
 
-        icon.addEventListener('click', () => {
-            console.log("Icon clicked for translation");
-            // Your translation logic goes here
-            alert(`Translating: ${selectedText}`); // Test action
-            document.body.removeChild(icon); // Remove the icon after clicking
+        icon.addEventListener("click", () => {
+        const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q=${encodeURIComponent(
+            selectedText
+        )}`;
+        fetch(apiUrl)
+            .then((response) => response.json())
+            .then((data) => {
+            const translatedText = data[0][0][0];
+            showPopup(selectedText, translatedText, e.pageX, e.pageY);
+            })
+            .catch((error) => console.error("Error translating text:", error));
+        document.body.removeChild(icon); // Remove the icon after clicking
         });
 
-        // Optional: Remove the icon if the user clicks anywhere outside of it
-        document.addEventListener('click', function removeIcon(e) {
-            if (!icon.contains(e.target)) {
-                document.body.removeChild(icon);
-                document.removeEventListener('click', removeIcon); // Remove the listener
-            }
-        });
     }
 });
+
 
 
 function showPopup(originalText, translatedText, posX, posY) {
