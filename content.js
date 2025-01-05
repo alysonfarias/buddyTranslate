@@ -31,8 +31,8 @@ function handleTextSelection(e) {
         icon.style.left = `${iconX}px`;
         icon.style.cursor = "pointer";
         icon.style.zIndex = "10000";
-        icon.style.width = "18px";
-        icon.style.height = "18px";
+        icon.style.width = "20px";
+        icon.style.height = "20px";
 
         document.body.appendChild(icon);
 
