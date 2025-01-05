@@ -1,5 +1,7 @@
 let icon;
 let popup;
+let srcLang = 'auto'; // Default source language
+let tgtLang = 'en'; // Default target language
 
 document.addEventListener("mouseup", function (e) {
     setTimeout(() => {
@@ -35,7 +37,7 @@ function handleTextSelection(e) {
         document.body.appendChild(icon);
 
         icon.addEventListener("click", function iconClickHandler() {
-            const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q=${encodeURIComponent(
+            const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${srcLang}&tl=${tgtLang}&dt=t&q=${encodeURIComponent(
                 selectedText
             )}`;
             fetch(apiUrl)
@@ -90,7 +92,7 @@ function showPopup(originalText, translatedText) {
             <div style="display: flex; gap: 10px;">
                 <span style="cursor: pointer; font-size: 18px;" id="audio" title="Play Audio">&#127911;</span>
                 <span style="cursor: pointer; font-size: 18px;" id="settings" title="Settings">&#9881;</span>
-                <span style="cursor: pointer; font-size: 18px;" id="saveFavorite" title="Save Favorite">&#9733;</span> <!-- Star icon for saving -->
+                <span style="cursor: pointer; font-size: 18px;" id="saveFavorite" title="Save Favorite">&#9733;</span>
             </div>
             <span style="cursor: pointer; font-size: 18px; color: #ef4444;" id="close" title="Close">&#10006;</span>
         </div>
@@ -101,9 +103,42 @@ function showPopup(originalText, translatedText) {
         <div style="margin-bottom: 15px;">
          ${translatedText} <span style="cursor: pointer; font-size: 18px;" id="copyTranslation" title="Copy Translation">&#128203;</span>
         </div>
+        <div style="margin-bottom: 10px;">
+            <label for="srcLang">From: </label>
+            <select id="srcLang">
+                <option value="auto" selected>Auto</option>
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <!-- Add more languages as needed -->
+            </select>
+            <label for="tgtLang">To: </label>
+            <select id="tgtLang">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <!-- Add more languages as needed -->
+            </select>
+        </div>
     </div>`;
 
     document.body.appendChild(popup);
+    
+    
+
+    const srcLangSelect = popup.querySelector('#srcLang');
+    srcLangSelect.value = srcLang;
+    srcLangSelect.addEventListener('change', function() {
+        srcLang = this.value;
+        translateAndShowUpdatedText();
+    });
+
+    const tgtLangSelect = popup.querySelector('#tgtLang');
+    tgtLangSelect.value = tgtLang;
+    tgtLangSelect.addEventListener('change', function() {
+        tgtLang = this.value;
+        translateAndShowUpdatedText();
+    });
 
     const copyOriginal = popup.querySelector("#copyOriginal");
     copyOriginal.addEventListener("click", function() {
@@ -157,4 +192,19 @@ function saveFavorite(originalText, translatedText) {
             console.log("Favorite saved:", newFavorite);
         });
     });
+}
+
+
+function translateAndShowUpdatedText() {
+    const selectedText = window.getSelection().toString().trim();
+    const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${srcLang}&tl=${tgtLang}&dt=t&q=${encodeURIComponent(
+        selectedText
+    )}`;
+    fetch(apiUrl)
+        .then((response) => response.json())
+        .then((data) => {
+            const translatedText = data[0][0][0];
+            showPopup(selectedText, translatedText);
+        })
+        .catch((error) => console.error("Error translating text:", error));
 }
