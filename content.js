@@ -31,8 +31,8 @@ function handleTextSelection(e) {
         icon.style.left = `${iconX}px`;
         icon.style.cursor = "pointer";
         icon.style.zIndex = "10000";
-        icon.style.width = "30px";
-        icon.style.height = "30px";
+        icon.style.width = "18px";
+        icon.style.height = "18px";
 
         document.body.appendChild(icon);
 
@@ -88,7 +88,7 @@ function showPopup(originalText, translatedText) {
         max-width: 320px; 
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: #1f2937;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <div style="display: flex; gap: 10px;">
                 <span style="cursor: pointer; font-size: 18px;" id="audio" title="Play Audio">&#127911;</span>
                 <span style="cursor: pointer; font-size: 18px;" id="settings" title="Settings">&#9881;</span>
