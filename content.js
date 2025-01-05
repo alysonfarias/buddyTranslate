@@ -20,11 +20,24 @@ function handleTextSelection(e) {
     if (selectedText.length > 0) {
         icon = document.createElement("img");
         icon.src = chrome.runtime.getURL("images/translate-icon.png");
+
+        // Calculate the position based on the selection's bounding rectangle
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        const iconX = rect.left + (rect.width / 2) - 25; // Center the icon horizontally
+        const iconY = rect.top - 30; // Position the icon above the selection
+
         icon.style.position = "fixed";
-        icon.style.top = `${e.pageY - 20}px`;
-        icon.style.left = `${e.pageX + 20}px`;
+        icon.style.top = `${iconY}px`;
+        icon.style.left = `${iconX}px`;
         icon.style.cursor = "pointer";
         icon.style.zIndex = "10000";
+        
+        // Optional: Set a size for the icon if needed
+        icon.style.width = "18px";
+        icon.style.height = "18px";
+
         document.body.appendChild(icon);
 
         icon.addEventListener("click", function iconClickHandler() {
@@ -39,7 +52,7 @@ function handleTextSelection(e) {
                     showPopup(selectedText, translatedText);
                 })
                 .catch((error) => console.error("Error translating text:", error));
-
+30
             // Remove the icon after clicking
             document.body.removeChild(icon);
             icon = null;
