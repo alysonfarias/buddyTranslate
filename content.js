@@ -1,17 +1,14 @@
-let icon; // Declare the icon variable in a higher scope
-let popup; // Declare the popup variable in a higher scope
+let icon;
+let popup;
 
-document.addEventListener("mouseup", function(e) {
+document.addEventListener("mouseup", function (e) {
     setTimeout(() => {
         handleTextSelection(e);
     }, 200);
 });
 
-// Function to handle text selection and show the translation icon
 function handleTextSelection(e) {
     const selectedText = window.getSelection().toString().trim();
-    console.log("Selected Text:", selectedText);
-
     if (icon) {
         document.body.removeChild(icon);
         icon = null;
@@ -20,23 +17,20 @@ function handleTextSelection(e) {
     if (selectedText.length > 0) {
         icon = document.createElement("img");
         icon.src = chrome.runtime.getURL("images/translate-icon.png");
-
-        // Calculate the position based on the selection's bounding rectangle
+        
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
-        const iconX = rect.left + (rect.width / 2) - 25; // Center the icon horizontally
-        const iconY = rect.top - 30; // Position the icon above the selection
+        const iconX = rect.left + (rect.width / 2) - 15;
+        const iconY = rect.top - 30;
 
         icon.style.position = "fixed";
         icon.style.top = `${iconY}px`;
         icon.style.left = `${iconX}px`;
         icon.style.cursor = "pointer";
         icon.style.zIndex = "10000";
-        
-        // Optional: Set a size for the icon if needed
-        icon.style.width = "18px";
-        icon.style.height = "18px";
+        icon.style.width = "30px";
+        icon.style.height = "30px";
 
         document.body.appendChild(icon);
 
@@ -48,20 +42,17 @@ function handleTextSelection(e) {
                 .then((response) => response.json())
                 .then((data) => {
                     const translatedText = data[0][0][0];
-                    console.log("Translation:", translatedText);
                     showPopup(selectedText, translatedText);
                 })
                 .catch((error) => console.error("Error translating text:", error));
-30
-            // Remove the icon after clicking
+
             document.body.removeChild(icon);
             icon = null;
         });
     }
 }
 
-// Add an event listener for selection change to remove the icon if no text is selected
-document.addEventListener('selectionchange', function() {
+document.addEventListener('selectionchange', function () {
     const selectedText = window.getSelection().toString().trim();
     if (icon && selectedText.length === 0) {
         document.body.removeChild(icon);
@@ -74,52 +65,81 @@ function showPopup(originalText, translatedText) {
         document.body.removeChild(popup);
     }
 
-    // Calculate the position based on the selection's bounding rectangle
     const selection = window.getSelection();
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
-    const posX = rect.left + (rect.width / 2); // Middle of the selected text
-    const posY = rect.bottom; // Bottom of the selected text
-
-    console.log("Showing popup at:", posX, posY);
+    const posX = rect.left + (rect.width / 2);
+    const posY = rect.bottom;
 
     popup = document.createElement("div");
     popup.innerHTML = `
     <div style="
-        padding: 15px; 
-        background-color: white; 
-        border: 1px solid #10C26F; 
-        border-radius: 8px; 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+        padding: 20px; 
+        background-color: #f3f4f6; 
+        border: 1px solid #d1d5db; 
+        border-radius: 10px; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
         position: fixed; 
         top: ${posY + 10}px; 
         left: ${posX - 150}px; 
         z-index: 10001; 
-        max-width: 300px; 
-        font-family: Arial, sans-serif;
-        color: #000000;">
-        <strong style="color: #10C26F;">Original:</strong> ${originalText}<br>
-        <strong style="color: #10C26F;">Translated:</strong> ${translatedText}<br>
-        <button id="saveFavorite" style="
-            background-color: #10C26F; 
-            color: white; 
-            padding: 8px 12px; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            margin-top: 10px;">
-            Save Favorite
-        </button>
+        max-width: 320px; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #1f2937;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; gap: 10px;">
+                <span style="cursor: pointer; font-size: 18px;" id="audio" title="Play Audio">&#127911;</span>
+                <span style="cursor: pointer; font-size: 18px;" id="settings" title="Settings">&#9881;</span>
+                <span style="cursor: pointer; font-size: 18px;" id="saveFavorite" title="Save Favorite">&#9733;</span> <!-- Star icon for saving -->
+            </div>
+            <span style="cursor: pointer; font-size: 18px; color: #ef4444;" id="close" title="Close">&#10006;</span>
+        </div>
+        <div style="margin-bottom: 10px;">
+         ${originalText} <span style="cursor: pointer; font-size: 18px;" id="copyOriginal" title="Copy Original">&#128203;</span>
+        </div>
+        <hr>
+        <div style="margin-bottom: 15px;">
+         ${translatedText} <span style="cursor: pointer; font-size: 18px;" id="copyTranslation" title="Copy Translation">&#128203;</span>
+        </div>
     </div>`;
 
     document.body.appendChild(popup);
 
-    const saveButton = popup.querySelector("#saveFavorite");
-    saveButton.addEventListener("click", function () {
+    const copyOriginal = popup.querySelector("#copyOriginal");
+    copyOriginal.addEventListener("click", function() {
+        navigator.clipboard.writeText(originalText).then(() => {
+            console.log("Original text copied!");
+        });
+    });
+
+    const copyTranslation = popup.querySelector("#copyTranslation");
+    copyTranslation.addEventListener("click", function() {
+        navigator.clipboard.writeText(translatedText).then(() => {
+            console.log("Translated text copied!");
+        });
+    });
+
+    const closeIcon = popup.querySelector("#close");
+    closeIcon.addEventListener("click", function() {
+        document.body.removeChild(popup);
+        popup = null;
+    });
+
+    const audioIcon = popup.querySelector("#audio");
+    audioIcon.addEventListener("click", function() {
+        console.log("Play audio (functionality to be implemented)");
+    });
+
+    const settingsIcon = popup.querySelector("#settings");
+    settingsIcon.addEventListener("click", function() {
+        console.log("Open settings (functionality to be implemented)");
+    });
+
+    const saveFavoriteIcon = popup.querySelector("#saveFavorite");
+    saveFavoriteIcon.addEventListener("click", function() {
         saveFavorite(originalText, translatedText);
     });
 
-    // Add an event listener to dismiss the popup when clicking outside of it
     document.addEventListener('click', function dismissPopup(e) {
         if (popup && !popup.contains(e.target)) {
             document.body.removeChild(popup);
