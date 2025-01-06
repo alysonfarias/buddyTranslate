@@ -1,72 +1,81 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
     background-color: #f5f5f5;
-    color: #000000; /* Use black for text */
+    color: #444;
+    line-height: 1.6;
 }
 
-h1 {
+header {
+    background: #10C26F;
+    color: #fff;
     text-align: center;
-    color: #10C26F; /* Accent color */
+    padding: 10px 0;
+    display: flex;
+    justify-content:center;
+    align-items: center;
 }
 
-h2 {
-    color: #10C26F; /* Accent color */
+main {
+    margin: 20px;
+    width: 300px;
 }
 
 label {
-    font-weight: bold;
-    color: #000000; /* Black for labels */
+    display: block;
+    margin-bottom: 5px;
 }
 
-select {
-    margin: 10px 0;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+select, input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    box-sizing: border-box;
 }
 
 button {
-    background-color: #10C26F; /* Accent color */
-    color: white;
-    padding: 10px 15px;
+    display: inline-block;
+    color: #fff;
+    background-color: #10C26F;
+    padding: 10px 20px;
+    margin-bottom: 20px;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    display: block;
-    width: 100%;
-    transition: background-color 0.3s; /* Smooth hover effect */
+    text-decoration: none;
+    transition: background 0.2s ease;
 }
 
 button:hover {
-    background-color: #0fa95d; /* Darker shade for hover effect */
+    background-color: #0fa95d;
 }
 
-#favoritesSection {
-    margin-top: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+.result {
+    margin-bottom: 20px;
 }
 
-#favoritesList {
-    list-style-type: none;
+.favorites {
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+}
+
+.favorites h2 {
+    color: #10C26F;
+}
+
+.favorites ul {
     padding: 0;
 }
 
-#favoritesList li {
+.favorites ul li {
     padding: 8px;
     border-bottom: 1px solid #eee;
-    color: #000000; /* Black for list items */
 }
 
-#favoritesList li:last-child {
-    border-bottom: none; /* Remove bottom border for the last item */
-}
-
-#favoritesList li:hover {
-    background-color: #f0f0f0; /* Highlight on hover */
+.favorites ul li:hover {
+    background-color:rgb(213, 213, 213);
 }

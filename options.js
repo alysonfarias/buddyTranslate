@@ -1,3 +1,55 @@
+let flashcardContainer = document.getElementById('flashcard-container');
+let flashcardElement = document.getElementById('flashcard');
+let flashcards = [];
+let currentFlashcardIndex = 0;
+
+chrome.storage.local.get({favorites: []}, function(data) {
+    flashcards = data.favorites;
+    updateFlashcard();
+});
+
+// Add an event listener to the flashcard to flip it
+flashcardElement.addEventListener('click', function() {
+    let flashcardFront = flashcardElement.querySelector('.flashcard-front');
+    let flashcardBack = flashcardElement.querySelector('.flashcard-back');
+
+    if (flashcardFront.style.display === 'none') {
+        flashcardFront.style.display = 'block';
+        flashcardBack.style.display = 'none';
+    } else {
+        flashcardFront.style.display = 'none';
+        flashcardBack.style.display = 'block';
+    }
+});
+
+// Add the logic to cycle through the flashcards
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight') {
+        currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcards.length;
+        updateFlashcard();
+    } else if (e.key === 'ArrowLeft') {
+        currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcards.length) % flashcards.length;
+        updateFlashcard();
+    }
+});
+
+// Update the flashcard with the current translation
+function updateFlashcard() {
+    if (flashcards.length > 0) {
+        let flashcard = flashcards[currentFlashcardIndex];
+        flashcardElement.innerHTML = `
+            <div class="flashcard-front">
+                ${flashcard.original}
+            </div>
+            <div class="flashcard-back" style="display: none;">
+                ${flashcard.translated}
+            </div>
+        `;
+    } else {
+        flashcardElement.textContent = 'No flashcards available';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const exportButton = document.getElementById('exportFavorites');
     const importButton = document.getElementById('importFavorites');
@@ -51,6 +103,32 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+    function loadFavorites(filter = "") {
+        chrome.storage.local.get({favorites: []}, function(data) {
+            const filteredFavorites = data.favorites.filter(fav => fav.original.includes(filter) || fav.translated.includes(filter));
+            favoritesList.innerHTML = '';
+            filteredFavorites.forEach(fav => {
+                const li = document.createElement('li');
+                const originalSpan = document.createElement('span');
+                originalSpan.textContent = `Original: ${fav.original}`;
+                originalSpan.style.backgroundColor = 'yellow'; // Highlight
+                originalSpan.onclick = function() { copyToClipboard(fav.original) }; // Copy on click
+                const translatedSpan = document.createElement('span');
+                translatedSpan.textContent = `, Translated: ${fav.translated}`;
+                translatedSpan.style.backgroundColor = 'lightgreen'; // Highlight
+                translatedSpan.onclick = function() { copyToClipboard(fav.translated) }; // Copy on click
+                li.appendChild(originalSpan);
+                li.appendChild(translatedSpan);
+                favoritesList.appendChild(li);
+            });
+        });
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copied to clipboard');
+        });
+    }
 
     function clearAllFavorites() {
         if (confirm('Are you sure you want to clear all favorites? This action cannot be undone.')) {
@@ -60,4 +138,26 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+    
+    let flashcards = [
+        { question: "Question 1", answer: "Answer 1", nextReview: 0 },
+        { question: "Question 2", answer: "Answer 2", nextReview: 0 },
+        { question: "Question 3", answer: "Answer 3", nextReview: 0 },
+        // add more flashcards as needed
+    ];
+    
+    function spacedRepetition() {
+        const currentDate = Date.now();
+        for (let flashcard of flashcards) {
+            if (flashcard.nextReview <= currentDate) {
+                // Show flashcard to the user and wait for their answer
+                // If the answer is correct, increase the nextReview date:
+                // For example, delay the next review by 2 days: 
+                flashcard.nextReview = currentDate + 2 * 24 * 60 * 60 * 1000;
+                // Adjust the delay as needed based on the user's performance,
+                // the difficulty of the flashcard, etc.
+            }
+        }
+    }
+    
 });

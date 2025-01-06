@@ -7,21 +7,33 @@
     <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
 <body>
-    <h1>Translator Settings</h1>
-    <div>
-        <label for="language">Choose a language:</label>
-        <select id="language">
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="pt">Portuguese</option>
-        </select>
-    </div>
-    <button id="manageFavorites">Manage Favorites</button>
-    <div id="favoritesSection">
-        <h2>Favorites</h2>
-        <ul id="favoritesList"></ul>
-    </div>
+    <header>
+        <h1>Buddy Translate</h1>
+        <img src="images/logo.png" width="64" height="64" alt="logo">
+    </header>
+    <main>
+        <section class="selection">
+            <label for="language">Choose a language:</label>
+            <select id="language">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="pt">Portuguese</option>
+            </select>
+        </section>
+        <section class="translation">
+            <label for="translateText">Translate Text:</label>
+            <input type="text" id="translateText">
+            <button id="translateButton">Translate</button>
+        </section>
+        <section class="result">
+            <div id="translatedText"></div>
+        </section>
+        <section class="favorites">
+            <button id="manageFavorites">Manage Favorites</button>
+            <ul id="favoritesList"></ul>
+        </section>
+    </main>
     <script src="popup.js"></script>
 </body>
 </html>

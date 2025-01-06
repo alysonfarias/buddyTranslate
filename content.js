@@ -1,7 +1,21 @@
 let icon;
 let popup;
 let srcLang = 'auto'; // Default source language
-let tgtLang = 'en'; // Default target language
+let tgtLang = 'pt'; // Default target language
+
+// Fetch stored target language when extension is loaded
+chrome.storage.local.get({targetLanguage: 'pt'}, function(data) {
+    tgtLang = data.targetLanguage;
+});
+
+// Update tgtLang whenever the target language is changed
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  for (let key in changes) {
+    if (key === 'targetLanguage') {
+      tgtLang = changes[key].newValue;
+    }
+  }
+});
 
 document.addEventListener("mouseup", function (e) {
     setTimeout(() => {
@@ -114,6 +128,7 @@ function showPopup(originalText, translatedText) {
             </select>
             <label for="tgtLang">To: </label>
             <select id="tgtLang">
+                <option value="pt">Portuguese</option>
                 <option value="en">English</option>
                 <option value="es">Spanish</option>
                 <option value="fr">French</option>

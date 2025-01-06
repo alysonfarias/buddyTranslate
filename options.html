@@ -4,15 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Favorite Translations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            background-color: #0fa95d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        #favoritesList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #filterText {
+            padding: 10px;
+            width: 30%;
+            margin: 10px 0;
+        }
+        #flashcard-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .flashcard {
+            width: 300px;
+            height: 200px;
+            border: 1px solid #000;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <h1>Favorite Translations</h1>
-    <button id="clearFavorites">Clear All Favorites</button>
-    <button id="exportFavorites">Export Favorites</button>
-    <input type="file" id="importFile" hidden>
-    <button id="importFavorites">Import Favorites</button>
+    <div>
+        <button id="clearFavorites">Clear All Favorites</button>
+        <button id="exportFavorites">Export Favorites</button>
+        <input type="file" id="importFile" hidden>
+        <button id="importFavorites">Import Favorites</button>
+    </div>
     <input type="text" id="filterText" placeholder="Filter words...">
     <ul id="favoritesList"></ul>
+
+    <div id="flashcard-container">
+        <div class="flashcard" id="flashcard">Click to flip the card</div>
+    </div>
+    <script src="options.js"></script>
     <script src="options.js"></script>
 </body>
 </html>
