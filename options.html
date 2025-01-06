@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +11,11 @@
             padding: 10px;
             background-color: #f0f0f0;
         }
+
         h1 {
             color: #333;
         }
+
         button {
             margin: 5px;
             padding: 10px;
@@ -22,24 +25,29 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         button:hover {
             opacity: 0.8;
         }
+
         #favoritesList {
             list-style-type: none;
             padding: 0;
         }
+
         #filterText {
             padding: 10px;
             width: 30%;
             margin: 10px 0;
         }
+
         #flashcard-container {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
+
         .flashcard {
             width: 300px;
             height: 200px;
@@ -47,8 +55,96 @@
             padding: 20px;
             text-align: center;
         }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: start;
+            padding: 20px;
+        }
+
+        .flex-item {
+            flex: 1;
+            margin: 10px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #flashcard-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flashcard {
+            width: 300px;
+            height: 200px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.05);
+        }
+
+        #favorites-container {
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        #filterText {
+            width: calc(100% - 40px);
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        ul#favoritesList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #favoritesList li {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s ease;
+        }
+
+        #favoritesList li:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #favoritesList span {
+            display: inline-block;
+            padding: 5px;
+            margin-right: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #favoritesList .original {
+            background-color: #FFFFA8;
+            /* light yellow */
+        }
+
+        #favoritesList .translated {
+            background-color: #A8FFA8;
+            /* light green */
+        }
+
+        #favoritesList span:hover {
+            background-color: #f4f4f4;
+        }
     </style>
 </head>
+
 <body>
     <h1>Favorite Translations</h1>
     <div>
@@ -57,13 +153,18 @@
         <input type="file" id="importFile" hidden>
         <button id="importFavorites">Import Favorites</button>
     </div>
-    <input type="text" id="filterText" placeholder="Filter words...">
-    <ul id="favoritesList"></ul>
+    <div id="content" class="flex-container">
+        <div id="flashcard-container" class="flex-item">
+            <div class="flashcard" id="flashcard">Click to flip the card</div>
+        </div>
+        <div id="favorites-container" class="flex-item">
+            <input type="text" id="filterText" placeholder="Filter words...">
+            <ul id="favoritesList"></ul>
+        </div>
 
-    <div id="flashcard-container">
-        <div class="flashcard" id="flashcard">Click to flip the card</div>
     </div>
     <script src="options.js"></script>
     <script src="options.js"></script>
 </body>
+
 </html>

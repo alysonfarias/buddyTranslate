@@ -110,19 +110,22 @@ document.addEventListener('DOMContentLoaded', function() {
             filteredFavorites.forEach(fav => {
                 const li = document.createElement('li');
                 const originalSpan = document.createElement('span');
+                originalSpan.className = 'original'; // Apply class for styling
                 originalSpan.textContent = `Original: ${fav.original}`;
-                originalSpan.style.backgroundColor = 'yellow'; // Highlight
-                originalSpan.onclick = function() { copyToClipboard(fav.original) }; // Copy on click
+                originalSpan.onclick = function() { copyToClipboard(fav.original) };
+    
                 const translatedSpan = document.createElement('span');
-                translatedSpan.textContent = `, Translated: ${fav.translated}`;
-                translatedSpan.style.backgroundColor = 'lightgreen'; // Highlight
-                translatedSpan.onclick = function() { copyToClipboard(fav.translated) }; // Copy on click
+                translatedSpan.className = 'translated'; // Apply class for styling
+                translatedSpan.textContent = ` Translated: ${fav.translated}`;
+                translatedSpan.onclick = function() { copyToClipboard(fav.translated) };
+    
                 li.appendChild(originalSpan);
                 li.appendChild(translatedSpan);
                 favoritesList.appendChild(li);
             });
         });
     }
+    
 
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
